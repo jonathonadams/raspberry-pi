@@ -10,22 +10,22 @@ e.g. `<your>.<domain>` & `nextcloud.<your>.<domain>` should point to your public
 
 1. Find Pi ip address (Just wait for DHCP). Can be done via looking in the DHCP table of the router or funning `arp -na | grep -i "dc:a6:32"` (PI4)
 2. Set the hostname to something useful, i.e jonopi4
-    ```bash
-    $ sudo nvim /etc/hostname
-    $ sudo sync
-    $ sudo reboot
-    ```
+   ```bash
+   $ sudo nvim /etc/hostname
+   $ sudo sync
+   $ sudo reboot
+   ```
 3. Restart the router (so the new hostname gets applied)
 4. In the the configuration for the home router, set a static IP address bassed on the mac address of the Raspberry Pi
 
 ## Install Microk8s
 
-Install as per the docs. 
+Install as per the docs.
 
 Once Microk8s is up and running make sure to check the status of the nodes. Note the default node is the hostname
 
 ```bash
-$ kubectly get nodes
+$ kubectl get nodes
 
 NAME     STATUS   ROLES    AGE     VERSION
 jonopi4   Ready    <none>   7d22h   v1.18.6-1+b4f4cb0b7fe3c1
@@ -34,6 +34,12 @@ jonopi4   Ready    <none>   7d22h   v1.18.6-1+b4f4cb0b7fe3c1
 If the default ubunto node is not ready, then follow the addivce here to fix the issue.
 
 [enable cgroup memory](https://askubuntu.com/questions/1189480/raspberry-pi-4-ubuntu-19-10-cannot-enable-cgroup-memory-at-boostrap/1190457#1190457)
+
+Once installed, enable dns resolution
+
+```bash
+$ microk8s enable dns
+```
 
 ## Install HELM and add official Repo
 
@@ -77,6 +83,7 @@ $ df -ha /dev/sda1
 # Optional - If you want to share the drives accross multiple nodes
 
 On master server
+
 ```bash
 // install all dependencies
 $ sudo apt-get install nfs-kernel-server -y
@@ -122,7 +129,6 @@ The Traefik dashboard should now be accessible on port `:8100`
 ## Install NextCloud
 
 helm show values nextcloud/nextcloud >> nextcloud.values.yml
-
 
 Add the [nextcloud](https://nextcloud.github.io/helm) repo.
 
@@ -191,6 +197,4 @@ $ kubectl apply -f 04.pi-hole.yml
 [comment]: # Create directories for the persistant data. Two located in /usr/home/dat
 [comment]: # `/home/ubuntu/data/pi-hole` & `/home/ubuntu/data/dnsmasq`
 
-
 Disable the DNS on the router and set to satic ip of raspbery pi, restart the router
-

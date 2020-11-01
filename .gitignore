@@ -1,2 +1,4 @@
 03.02.nextcloud.values.yml 
 *.private.yml 
+secrets.yml
+config.yml
